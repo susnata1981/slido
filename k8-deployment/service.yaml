@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-elb
+  annotations:
+    # This annotation is only required if you are creating an internal facing ELB. Remove this annotation to create public facing ELB.
+    # The interval for publishing the access logs (can be 5 or 60 minutes).
+  labels:
+    deploy: slido
+spec:
+  type: LoadBalancer
+  ports:
+  - name: "http"
+    protocol: TCP
+    port: 80 
+    targetPort: 3000
+  selector:
+    deploy: slido 

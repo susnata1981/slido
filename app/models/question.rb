@@ -1,0 +1,9 @@
+class Question < ApplicationRecord
+  belongs_to :guest
+  belongs_to :event
+  has_many :votes
+
+  enum status: {pending_review:0, approved:1, rejected:2, completed:3}
+
+  validates :status, presence: true
+end

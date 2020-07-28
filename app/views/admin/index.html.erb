@@ -1,0 +1,12 @@
+<h1>Admin Area</h1>
+
+<% if current_user %>
+<%= current_user.name %> 
+<%= current_user.email %>
+<%# <%= link_to 'Log Out', logout_path, method: :delete %></li> %>
+<% else %>
+<h4>Current user isn't set</h4>
+<%= link_to "Sign in with Google", user_google_oauth2_omniauth_authorize_path %>
+<% end %>
+
+

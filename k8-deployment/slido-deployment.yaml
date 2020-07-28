@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: slido-app # name of the deployment
+  labels: # these labels apply to the deployment
+    app: slido
+spec:
+  strategy:
+    type: Recreate
+  replicas: 1
+  selector:
+    matchLabels:
+      deploy: slido
+  template:
+    metadata:
+      labels: # these labels apply to our container
+        deploy: slido
+    spec:
+      containers:
+      - name: slido-container # name of our container
+        image: 196820743359.dkr.ecr.us-west-2.amazonaws.com/slido-repository:latest # the URI that we got from ECR
+        env:
+        - name: DATABASE_HOST
+          value: slido-prod-2.cqusa18zie5m.us-west-2.rds.amazonaws.com
+        - name: DATABASE_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: db-creds
+              key: username # use the encoded username from the K8s secret db-creds
+        - name: DATABASE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: db-creds
+              key: password # use the encoded password from the K8s secret db-creds
+        - name: DATABASE_NAME
+          value: slido_prod # our DB is named backend
+        - name: GOOGLE_CLIENT_ID
+          valueFrom:
+            secretKeyRef:
+              name: db-creds
+              key: google_client_id
+        - name: GOOGLE_CLIENT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: db-creds
+              key: google_client_secret
+        ports:
+        - containerPort: 3000 # expose the running contianer on port 3000
+          name: slido
