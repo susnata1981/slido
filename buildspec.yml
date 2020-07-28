@@ -6,7 +6,7 @@ phases:
     commands:
       - echo Logging into Amazon ECR...
       - $(aws ecr get-login --region $AWS_DEFAULT_REGION --no-include-email)
-      - REPOSITORY_URI=196820743359.dkr.ecr.us-west-2.amazonaws.com/slido-repository
+      - REPOSITORY_URI:196820743359.dkr.ecr.us-west-2.amazonaws.com/slido-repository
   build:
     commands:
       - echo Build started on `date`
