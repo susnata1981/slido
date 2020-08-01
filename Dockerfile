@@ -9,6 +9,7 @@ ENV RAILS_ENV production
 ENV RAILS_SERVE_STATIC_FILES true
 ENV RAILS_LOG_TO_STDOUT true
 ENV CLOUDFRONT_HOST d1onm49hj91bos.cloudfront.net
+ARG RAILS_MASTER_KEY
 
 RUN mkdir /myapp
 WORKDIR /myapp
