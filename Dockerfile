@@ -15,7 +15,7 @@ COPY Gemfile /myapp/Gemfile
 COPY Gemfile.lock /myapp/Gemfile.lock
 RUN bundle install --without development test
 
-#RUN RAILS_ENV=production bundle exec rails assets:precompile
+RUN RAILS_ENV=production bundle exec rails assets:precompile
 COPY . /myapp
 RUN yarn install --check-files
 
