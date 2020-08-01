@@ -40,7 +40,7 @@ phases:
       - echo List directory
       - ls -la
       - echo Push the latest image to cluster
-      - cat deployment.yaml
+        #- cat deployment.yaml
         #- kubectl apply -f deployment.yaml
         #- kubectl set image deployment/slido-app $ECR_REPO_PATH:$COMMIT_HASH
       - kubectl set image deployment/slido-app slido-container=$ECR_REPO_PATH:$COMMIT_HASH
