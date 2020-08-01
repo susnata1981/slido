@@ -20,6 +20,7 @@ RUN bundle install --without development test
 #RUN bundle exec rails ASSET_HOST=${CLOUDFRONT_HOST} assets:precompile
 #RAILS_ENV=production assets:precompileRUN RAILS_ENV=production bundle exec rails assets:precompile
 RUN bundle exec rails assets:precompile
+RUN bundle install --deployment --without development test assets
 COPY . /myapp
 RUN yarn install --check-files
 
@@ -28,5 +29,6 @@ COPY entrypoint.sh /usr/bin/
 RUN chmod +x /usr/bin/entrypoint.sh
 ENTRYPOINT ["entrypoint.sh"]
 EXPOSE 3000
+
 # Start the main process.
 CMD ["rails", "server", "-b", "0.0.0.0"]
