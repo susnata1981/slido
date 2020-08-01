@@ -23,7 +23,8 @@ RUN bundle install --without development test
 #RUN bundle install --deployment --without development test assets
 COPY . /myapp
 RUN yarn install --check-files
-RUN bundle exec rake webpacker:compile
+#RUN bundle exec rake webpacker:compile
+RUN bundle exec rails assets:precompile
 
 # Add a script to be executed every time the container starts.
 COPY entrypoint.sh /usr/bin/
