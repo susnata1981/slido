@@ -19,10 +19,11 @@ RUN bundle install --without development test
 #ARG ASSET_HOST
 #RUN bundle exec rails ASSET_HOST=${CLOUDFRONT_HOST} assets:precompile
 #RAILS_ENV=production assets:precompileRUN RAILS_ENV=production bundle exec rails assets:precompile
-RUN bundle exec rails assets:precompile
-RUN bundle install --deployment --without development test assets
+#RUN bundle exec rails assets:precompile
+#RUN bundle install --deployment --without development test assets
 COPY . /myapp
 RUN yarn install --check-files
+RUN rails webpacker:compile
 
 # Add a script to be executed every time the container starts.
 COPY entrypoint.sh /usr/bin/
