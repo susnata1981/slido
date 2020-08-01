@@ -8,6 +8,7 @@ RUN apt-get update -qq && apt-get install -y yarn
 ENV RAILS_ENV production
 ENV RAILS_SERVE_STATIC_FILES true
 ENV RAILS_LOG_TO_STDOUT true
+ENV CLOUDFRONT_HOST d1onm49hj91bos.cloudfront.net
 
 RUN mkdir /myapp
 WORKDIR /myapp
@@ -15,7 +16,10 @@ COPY Gemfile /myapp/Gemfile
 COPY Gemfile.lock /myapp/Gemfile.lock
 RUN bundle install --without development test
 
-RUN RAILS_ENV=production bundle exec rails assets:precompile
+#ARG ASSET_HOST
+#RUN bundle exec rails ASSET_HOST=${CLOUDFRONT_HOST} assets:precompile
+#RAILS_ENV=production assets:precompileRUN RAILS_ENV=production bundle exec rails assets:precompile
+RUN bundle exec rails assets:precompile
 COPY . /myapp
 RUN yarn install --check-files
 
