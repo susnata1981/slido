@@ -6,5 +6,6 @@ type: Opaque
 data:
   username: cm9vdA==
   password: RG9scGhpbjgx
-  google_client_id: NTMwODk4NDY2MDA4LWozcDEwa2QzcHZtNTlwa2Y3c3JtbWE1bXVjNmszc2xjLmFwcHMuZ29vZ2xldXNlcmNvbnRlbnQuY29t
-  google_client_secret: blhmTWtybGFpYWJ3eUFJTkhxR1h6X0df
+  google_client_id: MTQ3ODQyMjQzOTk5LXIzNDkwbTFzYWFuc3VlMzJpMGl1YnVzbW85OWI0bnEzLmFwcHMuZ29vZ2xldXNlcmNvbnRlbnQuY29t
+  google_client_secret: aDRtX2pRUElsdElZbW1ZZnpvVFhwd1pj 
+  rails_master_key: ZDY2OTUyY2M4MDdhOTNiOTQ2YTNhNjA5NjRkZTgwOWM=

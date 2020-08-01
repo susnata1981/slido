@@ -6,7 +6,7 @@ metadata:
     # This annotation is only required if you are creating an internal facing ELB. Remove this annotation to create public facing ELB.
     # The interval for publishing the access logs (can be 5 or 60 minutes).
   labels:
-    deploy: slido
+    app: slido
 spec:
   type: LoadBalancer
   ports:
