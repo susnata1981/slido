@@ -15,16 +15,11 @@ RUN mkdir /myapp
 WORKDIR /myapp
 COPY Gemfile /myapp/Gemfile
 COPY Gemfile.lock /myapp/Gemfile.lock
+
 RUN bundle install --without development test
 
-#ARG ASSET_HOST
-#RUN bundle exec rails ASSET_HOST=${CLOUDFRONT_HOST} assets:precompile
-#RAILS_ENV=production assets:precompileRUN RAILS_ENV=production bundle exec rails assets:precompile
-#RUN bundle exec rails assets:precompile
-#RUN bundle install --deployment --without development test assets
 COPY . /myapp
 RUN yarn install --check-files
-#RUN bundle exec rake webpacker:compile
 RUN bundle exec rails assets:precompile
 
 # Add a script to be executed every time the container starts.
