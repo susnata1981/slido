@@ -1,6 +1,6 @@
 # Admin functionality
 class AdminController < ApplicationController
-#  before_action :authenticate_user!
+  #before_action :authenticate_user!
 
   def index
     puts '*'*50

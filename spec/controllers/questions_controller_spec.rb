@@ -44,8 +44,16 @@ RSpec.describe ::V1::QuestionsController, type: :controller do
   end
 
   describe 'vote question' do
-    it 'up vote' do
+    it 'vote before joining event' do
       post :vote, params: { id: question.id, guest_id: guest.id, vote_type: 'up' }
+      expect(response).to have_http_status(401)
+    end
+
+    it 'up vote' do
+      post "/events/join", params: { join: { eventName: event.name, passcode: 'banana', firstname: guest.firstname, lastname: 'Basak' }}
+      post :vote, params: { id: question.id, guest_id: guest.id, vote_type: 'up' }
+      expect(response).to have_http_status(200)
+
       get :show, params: { id: question.id, event_id: event.id }
       expect(response).to have_http_status(200)
       parsed_body = JSON.parse(response.body)

@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  root '/', {controller: 'static', action: 'index' } 
+
   devise_for :users, controllers: {omniauth_callbacks: "omniauth_callbacks"}
 
   devise_scope :user do
@@ -34,6 +36,5 @@ Rails.application.routes.draw do
     !req.xhr? && req.format.html?
   end
 
-  root 'static#index'
   # root 'events/join'
 end

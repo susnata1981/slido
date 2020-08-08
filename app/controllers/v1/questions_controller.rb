@@ -21,6 +21,11 @@ module V1
     end
 
     def vote
+      if user_not_joined_event?
+        render json: { error: 'User not joined event' }, status: 401
+        return
+      end
+
       @question = Question.find(params[:id])
       @guest = Guest.find(session[:guest]['id'])
       @vote = Vote.where(question_id: @question.id, guest_id: @guest.id, vote_type: params[:vote_type]).first

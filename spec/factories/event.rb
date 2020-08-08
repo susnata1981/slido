@@ -1,4 +1,3 @@
-
 FactoryBot.define do
   factory :event do |e|
     sequence(:name) {|n| "Event #{n}"}

@@ -8,6 +8,7 @@
     "@rails/activestorage": "^6.0.0",
     "@rails/ujs": "^6.0.0",
     "@rails/webpacker": "4.2.2",
+    "babel-plugin-transform-react-jsx": "^6.24.1",
     "babel-plugin-transform-react-remove-prop-types": "^0.4.24",
     "jquery": "^3.5.1",
     "prop-types": "^15.7.2",
@@ -20,6 +21,32 @@
   },
   "version": "0.1.0",
   "devDependencies": {
+    "@testing-library/jest-dom": "^5.11.2",
+    "@testing-library/react": "^10.4.8",
+    "@types/jest": "^26.0.9",
+    "@types/webpack-env": "^1.15.2",
+    "@typescript-eslint/eslint-plugin": "^3.8.0",
+    "@typescript-eslint/parser": "^3.8.0",
+    "babel-jest": "^26.2.2",
+    "eslint": "^7.6.0",
+    "eslint-config-preact": "^1.1.1",
+    "eslint-plugin-react": "^7.20.5",
+    "jest": "^26.2.2",
+    "regenerator-runtime": "^0.13.7",
+    "ts-jest": "^26.1.4",
     "webpack-dev-server": "^3.11.0"
+  },
+  "scripts": {
+    "test": "jest",
+    "test-watch": "jest --watch"
+  },
+  "jest": {
+    "roots": [
+      "test/javascript"
+    ],
+    "moduleDirectories": [
+      "node_modules",
+      "app/javascript"
+    ]
   }
 }

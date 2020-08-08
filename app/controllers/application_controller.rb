@@ -4,6 +4,10 @@ class ApplicationController < ActionController::Base
     new_user_session_path
   end
 
+  def user_not_joined_event?
+    session[:guest].blank?
+  end
+
 #  def authenticate_user!
 #    debugger
 #    super # just if want the default behavior

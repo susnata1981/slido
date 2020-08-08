@@ -76,8 +76,5 @@ module V1
       params.require(:join).permit(:eventName, :passcode, :firstname, :lastname)
     end
 
-    def user_not_joined_event?
-      session[:guest].blank?
-    end
   end
 end

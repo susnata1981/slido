@@ -5,5 +5,6 @@ FactoryBot.define do
     up { 3 }
     down { 4 }
     guest
+    event
   end
 end

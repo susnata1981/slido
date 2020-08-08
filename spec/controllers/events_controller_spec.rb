@@ -18,18 +18,24 @@ RSpec.describe ::V1::EventsController, type: :controller do
   end
 
   describe 'Show event' do
-    let(:event)  { create(:event, user: subject.current_user) }
-    let(:guest)  { create(:guest, event: event) }
-    let(:question) { create(:question, guest: guest) }
-  
-    it 'returns user not logged in' do
+    let!(:event) { create(:event, user: subject.current_user) }
+    let!(:guest) { create(:guest, event: event) }
+    let!(:question) { create(:question, guest: guest, event: event) }
+
+    it 'return 401 when neither user or admin logged in' do
+      sign_out subject.current_user
+      get :show, params: { id: event.id }
+      expect(response).to have_http_status(401)
+    end
+
+    it 'returns events when admin logged in' do
       get :show, params: { id: event.id }
       expect(response).to have_http_status(200)
       parsed_body = JSON.parse(response.body)
-      expect(parsed_body["isLoggedIn"]).to be(false)
+      expect(parsed_body["data"]["id"]).to eq("1")
     end
 
-    it 'returns user logged in' do
+    it 'returns events when user joined an event' do
       post :join, params: { join: { eventName: event.name, passcode: 'banana', firstname: 'Sean', lastname: 'Basak' }}
       get :show, params: { id: event.id }
       expect(response).to have_http_status(200)

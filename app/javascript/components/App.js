@@ -76,6 +76,7 @@ class App extends React.Component {
             path="/hello"
             render={() => <HelloWorld greeting="Adi" />}
           />
+          <Route render={() => <Redirect to="/" />} />
         </Switch>
       </BrowserRouter>
     );
