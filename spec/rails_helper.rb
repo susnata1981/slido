@@ -72,3 +72,5 @@ RSpec.configure do |config|
   config.include FactoryBot::Syntax::Methods
   config.extend ControllerMacros, :type => :controller
 end
+Capybara.default_driver = :selenium_chrome
+
