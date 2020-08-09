@@ -14,6 +14,8 @@ import history from "./History";
 import Admin from "./admin/Admin";
 import AdminEventDetails from "./admin/AdminEventDetails";
 
+import { Grid, Button } from "@material-ui/core";
+
 class App extends React.Component {
   constructor(props) {
     super(props);
@@ -69,7 +71,10 @@ class App extends React.Component {
           {/*<Route exact path="/administrator" render={() => (
             this.state.isLoggedIn? (<Admin />) : (<Redirect to="/" />)
           )} />*/}
-          <Route path="/administrator/event/:id" component={AdminEventDetails} />
+          <Route
+            path="/administrator/event/:id"
+            component={AdminEventDetails}
+          />
           <Route path="/administrator" component={Admin} />
           <Route
             exact
@@ -91,14 +96,37 @@ class Home extends React.Component {
   render() {
     return (
       <React.Fragment>
-        <h2>Home</h2>
-        <h3>
-          LoggedIn: {this.props.isLoggedIn ? "Logged In" : "Not Logged In"}
-        </h3>
-        <Link to="/join">Join Event</Link>
-        <br />
-        <Link to="/administrator">Admin</Link>
-        <br />
+        <Grid
+          container
+          spacing={0}
+          direction="column"
+          justify="center"
+          alignItems="center"
+          style={{ minHeight: "100vh" }}
+        >
+          <h1>BA Slido Home</h1>
+
+          <Grid item xs={3} style={{ padding: 16 }}>
+            <Button
+              size="large"
+              color="primary"
+              variant="contained"
+              href="/join"
+            >
+              Join Events
+            </Button>
+          </Grid>
+          <Grid item xs={3} style={{ padding: 16 }}>
+            <Button
+              size="large"
+              color="primary"
+              variant="contained"
+              href="/administrator"
+            >
+              Administrator
+            </Button>
+          </Grid>
+        </Grid>
       </React.Fragment>
     );
   }
