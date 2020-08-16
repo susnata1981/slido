@@ -1,8 +1,16 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 
 import { useForm } from "react-hook-form";
 
-import { Box, Button, TextField, Grid } from "@material-ui/core";
+import {
+  Box,
+  Button,
+  TextField,
+  Grid,
+  Select,
+  MenuItem,
+  InputLabel
+} from "@material-ui/core";
 
 export default class AdminEventDetails extends React.Component {
   constructor(props) {
@@ -21,7 +29,7 @@ export default class AdminEventDetails extends React.Component {
   }
 
   fetchQuestions = () => {
-    fetch(`/v1/events/${this.state.id}/questions?filter=all`)
+    fetch(`/v1/events/${this.state.id}/questions?filter=4`)
       .then(response => response.json())
       .then(result => {
         let questions = this.extractQuestion(result);
@@ -124,6 +132,9 @@ export default class AdminEventDetails extends React.Component {
 
 function QuestionContainer(props) {
   const { questions } = props;
+  const [currentQuestions, setCurrentQuestions] = useState(questions);
+  const [currentFilter, setCurrentFilter] = useState("all");
+
   const upVoteCount = question => {
     return question.votes.filter(v => v.vote_type == "up").length;
   };
@@ -136,11 +147,32 @@ function QuestionContainer(props) {
     }
   });
 
+  const onChange = event => {
+    setCurrentFilter(event.target.value);
+    if (event.target.value != "all") {
+      setCurrentQuestions(questions.filter(q => q.status == event.target.value));
+    } else {
+      setCurrentQuestions(questions);
+    }
+  };
+
   return (
     <React.Fragment>
       <Grid container spacing={2}>
         <Grid item xs={12} style={{ marginLeft: "16px" }}>
-          {questions.map((q, i) => {
+          <InputLabel id="question-filter-select">Filter Questions</InputLabel>
+          <Select
+            labelId="question-filter"
+            id="question-filter-select"
+            value={currentFilter}
+            onChange={onChange}
+          >
+            <MenuItem value="approved">Approved</MenuItem>
+            <MenuItem value="rejected">Rejected</MenuItem>
+            <MenuItem value="completed">Completed</MenuItem>
+            <MenuItem value="all">All</MenuItem>
+          </Select>
+          {currentQuestions.map((q, i) => {
             return (
               <Question
                 key={i}
@@ -220,7 +252,7 @@ function Question(props) {
             Reject
           </Button>
           <Button color="secondary" onClick={() => update_status("completed")}>
-           Mark as Complete 
+            Mark as Complete
           </Button>
         </Grid>
       </Grid>

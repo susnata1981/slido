@@ -10,18 +10,23 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_07_18_150146) do
+ActiveRecord::Schema.define(version: 2020_08_13_211014) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "administrators", force: :cascade do |t|
+    t.string "email"
+  end
 
   create_table "events", force: :cascade do |t|
     t.string "name"
     t.datetime "start"
     t.string "passcode"
-    t.integer "user_id", null: false
+    t.bigint "user_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.string "description", null: false
     t.index ["user_id"], name: "index_events_on_user_id"
   end
 
@@ -30,19 +35,19 @@ ActiveRecord::Schema.define(version: 2020_07_18_150146) do
     t.string "lastname"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.integer "event_id", null: false
+    t.bigint "event_id", null: false
     t.index ["event_id"], name: "index_guests_on_event_id"
   end
 
   create_table "questions", force: :cascade do |t|
     t.string "content"
-    t.integer "guest_id", null: false
+    t.bigint "guest_id", null: false
     t.integer "up"
     t.integer "down"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.integer "status", default: 0, null: false
-    t.integer "event_id", null: false
+    t.integer "status", null: false
+    t.bigint "event_id", null: false
     t.index ["event_id"], name: "index_questions_on_event_id"
     t.index ["guest_id"], name: "index_questions_on_guest_id"
   end
@@ -56,13 +61,14 @@ ActiveRecord::Schema.define(version: 2020_07_18_150146) do
     t.datetime "remember_created_at"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.integer "role"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["uid", "provider"], name: "index_users_on_uid_and_provider", unique: true
   end
 
   create_table "votes", force: :cascade do |t|
-    t.integer "guest_id", null: false
-    t.integer "question_id", null: false
+    t.bigint "guest_id", null: false
+    t.bigint "question_id", null: false
     t.string "vote_type"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false

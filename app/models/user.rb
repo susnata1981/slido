@@ -5,6 +5,7 @@ class User < ApplicationRecord
   #        :recoverable, :rememberable, :validatable
 
   devise :omniauthable, omniauth_providers: [:google_oauth2]
+  enum role: { user:1, admin:2, superuser:3 }
 
   has_many :events
 
@@ -14,5 +15,9 @@ class User < ApplicationRecord
         user.email = data["email"] if user.email.blank?
       end
     end
+  end
+
+  def set_default_role
+    self.role ||= :user
   end
 end

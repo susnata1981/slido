@@ -20,6 +20,11 @@ module V1
 
     def create
       @event = Event.new(event_params)
+      if @event.name.nil? || @event.description.nil? || @event.start.nil?
+        render json: { success: false }, status: 400
+        return
+      end
+
       @event.user = current_user
 
       if @event.save
@@ -27,6 +32,19 @@ module V1
       else
         render json: { error: true }
       end
+    end
+
+    def update
+      @event = Event.find(params["id"])
+      updated_event = event_params
+      puts updated_event
+      @event.update!(
+        name: updated_event["name"], 
+        description: updated_event["description"], 
+        passcode: updated_event["passcode"], 
+        start: updated_event["start"])
+
+      render json: @event, status: 200
     end
 
     def destroy
@@ -69,7 +87,7 @@ module V1
     private
 
     def event_params
-      params.require(:event).permit(:name, :start, :passcode)
+      params.require(:event).permit(:name, :description, :start, :passcode)
     end
 
     def join_params

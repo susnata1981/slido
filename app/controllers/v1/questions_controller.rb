@@ -9,9 +9,13 @@ module V1
       @filter = params[:filter]
       if @filter.nil?
         @questions = Question.where(event_id: params[:event_id], status: 1)
+      elsif @filter != "4"
+        @questions = Question.where(event_id: params[:event_id], status: @filter)
       else
         @questions = Question.where(event_id: params[:event_id])
       end
+      puts "------------------- #{@filter} #{params[:event_id]}"
+      puts QuestionSerializer.new(@questions, include: [:guest, :votes]).serializable_hash
       render json: QuestionSerializer.new(@questions, include: [:guest, :votes]).serializable_hash, status: 200
     end
 
@@ -60,7 +64,6 @@ module V1
       @question.status = 'pending_review'
       if @question.save
         puts QuestionSerializer.new(@question).serializable_hash
-        render json: QuestionSerializer.new(@question).serializable_hash, status: :ok
       else
         puts @question.errors.messages
         render json: { success: false }, status: 500

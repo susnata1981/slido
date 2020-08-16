@@ -3,17 +3,16 @@ require 'rails_helper'
 RSpec.describe 'Home features', type: :feature do
   before do
     Rails.application.env_config["devise.mapping"] = Devise.mappings[:user] # If using Devise
-    stub_omniauth
     Rails.application.env_config["omniauth.auth"] = OmniAuth.config.mock_auth[:google]
   end
 
   describe 'index page' do
-    let(:sleep_duration) { 10 }
+    let(:sleep_duration) { 2 }
 
     it 'display the links' do
       stub_omniauth
       puts 'Running capybara test'
-      visit('/administrator')
+      visit('/admin')
       sleep sleep_duration 
       expect(page).to have_content('Admin')
       find('a', text: /Sign in/).click

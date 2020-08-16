@@ -1,5 +1,5 @@
-import React from "react";
 import PropTypes from "prop-types";
+import React from "react";
 
 import { BrowserRouter, Switch, Route, Link, Redirect } from "react-router-dom";
 import { useHistory } from "react-router-dom";
@@ -11,8 +11,9 @@ import Question from "./Question";
 import EventDetails from "./EventDetails";
 import Guest from "./Guest";
 import history from "./History";
-import Admin from "./admin/Admin";
+import AdminHome from "./admin/Home";
 import AdminEventDetails from "./admin/AdminEventDetails";
+import CreateEvent from "./admin/CreateEvent";
 
 import { Grid, Button } from "@material-ui/core";
 
@@ -64,18 +65,15 @@ class App extends React.Component {
             render={() => <Home isLoggedIn={this.state.isLoggedIn} />}
           />
           <Route exact path="/join" render={() => <Join />} />
-          {/*<Route exact path="/list" render={() => <Event />} />*/}
           <Route path="/event/:id" component={EventDetails} />
           <Route path="/guest/:id" component={Guest} />
           <Route exact path="/question" render={() => <Question />} />
-          {/*<Route exact path="/administrator" render={() => (
-            this.state.isLoggedIn? (<Admin />) : (<Redirect to="/" />)
-          )} />*/}
           <Route
             path="/administrator/event/:id"
             component={AdminEventDetails}
           />
-          <Route path="/administrator" component={Admin} />
+          <Route path="/administrator/create" component={CreateEvent} />
+          <Route path="/administrator" component={AdminHome} />
           <Route
             exact
             path="/hello"

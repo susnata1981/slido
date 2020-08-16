@@ -4,6 +4,12 @@ class OmniauthCallbacksController < Devise::OmniauthCallbacksController
 
   def google_oauth2
     auth = request.env["omniauth.auth"]
+    email = auth['info']['email']
+    if Administrator.where(email: email).blank?
+      permission_denied
+      return
+    end
+
     user = User.where(provider: auth["provider"], uid: auth["uid"])
             .first_or_initialize(email: auth["info"]["email"])
     user.name ||= auth["info"]["name"]
@@ -26,5 +32,9 @@ class OmniauthCallbacksController < Devise::OmniauthCallbacksController
   def is_logged_in?
     puts 'Current user = #{current_user}'
     current_user
+  end
+
+  def permission_denied
+    render file: 'public/401.html', status: 401
   end
 end
