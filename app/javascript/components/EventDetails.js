@@ -1,8 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 
 import { useForm } from "react-hook-form";
-
-import AskQuestion from "./AskQuestion";
 
 import {
   Box,
@@ -30,16 +28,8 @@ export default class EventDetails extends React.Component {
     };
   }
 
-  isLoggedInAsGuest = () => {
-    fetch("/is_logged_in_as_guest").then(response => {
-      if (response.status == 401) {
-        window.location.href = "/join";
-      }
-    });
-  };
-
   fetchQuestions = () => {
-    fetch(`/v1/events/${this.state.id}/questions`)
+    fetch(`/v1/events/${this.state.id}/questions?filter=4`)
       .then(response => response.json())
       .then(result => {
         let questions = this.extractQuestion(result);
@@ -69,8 +59,6 @@ export default class EventDetails extends React.Component {
 
   componentDidMount() {
     this._isMounted = true;
-
-    this.isLoggedInAsGuest();
 
     if (this.state.forceUpdate || this.state.isLoadingQuestions) {
       this.fetchQuestions();
@@ -144,6 +132,9 @@ export default class EventDetails extends React.Component {
 
 function QuestionContainer(props) {
   const { questions } = props;
+  const [currentQuestions, setCurrentQuestions] = useState(questions);
+  const [currentFilter, setCurrentFilter] = useState("all");
+
   const upVoteCount = question => {
     return question.votes.filter(v => v.vote_type == "up").length;
   };
@@ -156,19 +147,22 @@ function QuestionContainer(props) {
     }
   });
 
+  const onChange = event => {
+    setCurrentFilter(event.target.value);
+    if (event.target.value != "all") {
+      setCurrentQuestions(
+        questions.filter(q => q.status == event.target.value)
+      );
+    } else {
+      setCurrentQuestions(questions);
+    }
+  };
+
   return (
     <React.Fragment>
       <Grid container spacing={2}>
         <Grid item xs={12} style={{ marginLeft: "16px" }}>
-          <AskQuestion
-            id={props.id}
-            questions={props.questions}
-            setQuestions={props.setQuestions}
-            refreshQuestions={props.refreshQuestions}
-          />
-        </Grid>
-        <Grid item xs={12} style={{ marginLeft: "16px" }}>
-          {questions.map((q, i) => {
+          {currentQuestions.map((q, i) => {
             return (
               <Question
                 key={i}
@@ -240,22 +234,13 @@ function Question(props) {
           <Box textAlign="left" fontStyle="italic" fontSize={14}>
             by {getGuestName(getGuest(props.question.guest_id))}&nbsp;&nbsp;
           </Box>
-          <Button color="secondary" onClick={() => update_status("approved")}>
-            Approve
-          </Button>
-          &nbsp;
-          <Button color="secondary" onClick={() => update_status("rejected")}>
-            Reject
-          </Button>
-          &nbsp;
           <Button color="secondary" onClick={() => postVote("up")}>
-            up ({upVoteCount("up")})
+            Up({upVoteCount()})
           </Button>
           &nbsp;
           <Button color="secondary" onClick={() => postVote("down")}>
-            down ({downVoteCount("down")})
+            Down({downVoteCount()})
           </Button>
-          &nbsp;
         </Grid>
       </Grid>
     </React.Fragment>
