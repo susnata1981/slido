@@ -74,3 +74,48 @@ RSpec.configure do |config|
 end
 Capybara.default_driver = :selenium_chrome
 
+# Fake OATH2 setup for testing
+OmniAuth.config.test_mode = true
+# then, provide a set of fake oauth data that
+# omniauth will use when a user tries to authenticate:
+OmniAuth.config.mock_auth[:google_oauth2] = OmniAuth::AuthHash.new({
+  provider: "google",
+    uid: "12345678910",
+    info: {
+      email: "susnata@gmail.com",
+      first_name: "Susnata",
+      last_name: "Basak"
+    },
+    credentials: {
+      token: "abcdefg12345",
+      refresh_token: "12345abcdefg",
+      expires_at: DateTime.now,
+      expires: true
+    },
+    "extra" => {
+    "id_token" => "ID_TOKEN",
+    "id_info" => {
+      "azp" => "APP_ID",
+      "aud" => "APP_ID",
+      "sub" => "100000000000000000000",
+      "email" => "john@example.com",
+      "email_verified" => true,
+      "at_hash" => "HK6E_P6Dh8Y93mRNtsDB1Q",
+      "iss" => "accounts.google.com",
+      "iat" => 1496117119,
+      "exp" => 1496120719
+    },
+    "raw_info" => {
+      "sub" => "100000000000000000000",
+      "name" => "John Smith",
+      "given_name" => "John",
+      "family_name" => "Smith",
+      "profile" => "https://plus.google.com/+JohnSmith",
+      "picture" => "https://lh4.googleusercontent.com/photo.jpg?sz=50",
+      "email" => "john@example.com",
+      "email_verified" => "true",
+      "locale" => "en",
+      "hd" => "company.com"
+    }
+  }
+})

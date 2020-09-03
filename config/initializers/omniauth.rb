@@ -4,3 +4,4 @@
 #  ENV['GOOGLE_CLIENT_SECRET'],
 #  scope: ['email', 'profile']
 #end
+OmniAuth.config.full_host = Rails.env.production? ? 'https://domain.com' : 'http://localhost:3000'

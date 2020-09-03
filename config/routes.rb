@@ -1,10 +1,9 @@
 Rails.application.routes.draw do
-  #root '/', {controller: 'static', action: 'index' } 
-
   devise_for :users, controllers: {omniauth_callbacks: "omniauth_callbacks"}
 
   devise_scope :user do
     get 'sign_out', :to => 'devise/sessions#destroy', :as => :destroy_user_session
+    post 'sign_in', :to => 'devise/sessions#new', :as => :new_user_session
   end
 
   # For details on the DSL available within this file, see https://guides.rubyonrails.org/routing.html

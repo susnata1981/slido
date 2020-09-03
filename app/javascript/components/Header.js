@@ -78,6 +78,7 @@ export default function MenuAppBar() {
           {auth && (
             <div>
               <IconButton
+                name="header-menu"
                 aria-label="account of current user"
                 aria-controls="menu-appbar"
                 aria-haspopup="true"

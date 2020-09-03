@@ -32,13 +32,13 @@ gem 'bootsnap', '>= 1.4.2', require: false
 
 gem 'react-rails'
 
-gem 'devise'
+gem 'devise', '~> 4.7.2'
 
 gem 'fast_jsonapi'
 
 gem 'faraday'
 
-gem 'omniauth-google-oauth2'
+gem 'omniauth-google-oauth2', '~> 0.8.0'
 
 gem 'dotenv-rails', groups: [:development, :test]
 

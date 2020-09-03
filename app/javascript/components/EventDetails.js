@@ -2,8 +2,17 @@ import React, { useEffect, useState } from "react";
 
 import { useForm } from "react-hook-form";
 
-import { Box, Button, TextField, Grid } from "@material-ui/core";
 import AskQuestion from "./AskQuestion";
+
+import {
+  Box,
+  Button,
+  TextField,
+  Grid,
+  Select,
+  MenuItem,
+  InputLabel
+} from "@material-ui/core";
 
 export default class EventDetails extends React.Component {
   constructor(props) {

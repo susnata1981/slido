@@ -54,8 +54,12 @@ module V1
 
     def join
       pm = join_params
-      @event = Event.where(name: pm[:eventName]).first
+      unless Event.exists?(name: pm[:eventName])
+        render json: { success: false, error: "Event does not exist" }, status: 401
+        return
+      end
 
+      @event = Event.where(name: pm[:eventName]).first
       if @event.passcode == pm[:passcode]
         @guest = Guest.where(firstname: pm[:firstname], lastname: pm[:lastname], event_id: @event.id).first
 
@@ -69,7 +73,6 @@ module V1
         session[:event] = @event
 
         render json: EventSerializer.new(@event).serializable_hash, status: 200
-
       else
         render json: { success: false }, status: 401
       end

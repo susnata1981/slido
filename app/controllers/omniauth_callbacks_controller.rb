@@ -4,6 +4,7 @@ class OmniauthCallbacksController < Devise::OmniauthCallbacksController
 
   def google_oauth2
     auth = request.env["omniauth.auth"]
+    puts auth
     email = auth['info']['email']
     if Administrator.where(email: email).blank?
       permission_denied
