@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useContext } from "react";
-
 import { useForm } from "react-hook-form";
+import AskQuestion from "./consumer/AskQuestion";
+import Question from "./core/Question";
 
 import {
   Box,
@@ -12,37 +13,58 @@ import {
   InputLabel
 } from "@material-ui/core";
 
-export default class EventDetails extends React.Component {
-  constructor(props) {
-    super(props);
-    const { id } = props.match.params;
-    this._isMounted = false;
-    this.state = {
-      id: id,
-      event: {},
-      isLoadingQuestions: true,
-      isLoadingEvent: true,
-      questions: [],
-      guests: [],
-      forceUpdate: false
-    };
-  }
+export default function EventDetails(props) {
+  const { id } = props.match.params;
+  const [event, setEvent] = useState({});
+  const [questions, setQuestions] = useState([]);
+  const [isLoadingQuestions, setIsLoadingQuestions] = useState(true);
+  const [isLoadingEvent, setIsLoadingEvent] = useState(true);
+  const [guests, setGuests] = useState({});
+  const [forceUpdate, setForceUpdate] = useState(false);
 
-  fetchQuestions = () => {
-    fetch(`/v1/events/${this.state.id}/questions?filter=4`)
+  useEffect(() => {
+    fetchQuestions();
+  }, []);
+
+  useEffect(() => {
+    fetch(`/v1/events/${id}`, {
+      method: "GET"
+    })
+      .then(response => response.json())
+      .then(r => {
+        const g = r.included
+          .filter(e => e.type == "guest")
+          .map(e => {
+            return {
+              id: e.id,
+              firstname: e.attributes.firstname,
+              lastname: e.attributes.lastname
+            };
+          });
+
+        setGuests(g);
+        setEvent({
+          id: id,
+          name: r.data.attributes.name,
+          passcode: r.data.attributes.passcode,
+          start: new Date(r.data.attributes.start)
+        });
+        setIsLoadingEvent(false);
+      });
+  }, []);
+
+  const fetchQuestions = () => {
+    fetch(`/v1/events/${id}/questions?filter=4`)
       .then(response => response.json())
       .then(result => {
-        let questions = this.extractQuestion(result);
-        if (this._isMounted) {
-          this.setState({
-            isLoadingQuestions: false,
-            questions: questions
-          });
-        }
+        let questions = extractQuestion(result);
+        sortQuestions(questions);
+        setIsLoadingQuestions(false);
+        setQuestions(questions);
       });
   };
 
-  extractQuestion = resp => {
+  const extractQuestion = resp => {
     return resp.data.map(e => {
       const votes = resp.included
         .filter(e2 => e2.type == "vote" && e2.attributes.question_id == e.id)
@@ -57,146 +79,18 @@ export default class EventDetails extends React.Component {
     });
   };
 
-  componentDidMount() {
-    this._isMounted = true;
-
-    if (this.state.forceUpdate || this.state.isLoadingQuestions) {
-      this.fetchQuestions();
-    }
-
-    this.timer = setInterval(() => this.fetchQuestions(), 5000);
-
-    if (this.state.forceUpdate || this.state.isLoadingQuestions) {
-      fetch(`/v1/events/${this.state.id}`, {
-        method: "GET"
-      })
-        .then(response => response.json())
-        .then(r => {
-          const g = r.included
-            .filter(e => e.type == "guest")
-            .map(e => {
-              return {
-                id: e.id,
-                firstname: e.attributes.firstname,
-                lastname: e.attributes.lastname
-              };
-            });
-          if (this._isMounted) {
-            this.setState({
-              event: {
-                name: r.data.attributes.name,
-                passcode: r.data.attributes.passcode
-              },
-              guests: g,
-              isLoadingEvent: false
-            });
-          }
-        });
-    }
-  }
-
-  componentWillUnmount() {
-    this._isMounted = false;
-    clearInterval(this.timer);
-    this.timer = null;
-  }
-
-  render() {
-    return (
-      <React.Fragment>
-        {this.state.isLoadingEvent && <h4>Loading Event Data...</h4>}
-        {!this.state.isLoadingEvent && (
-          <div>
-            <ul>
-              <li>
-                <h2>Name: {this.state.event.name}</h2>
-              </li>
-              <li>
-                <h2>Passcode: {this.state.event.passcode}</h2>
-              </li>
-            </ul>
-
-            <QuestionContainer
-              id={this.state.id}
-              questions={this.state.questions}
-              guests={this.state.guests}
-              setQuestions={this.state.setQuestions}
-              refreshQuestions={this.fetchQuestions}
-            />
-          </div>
-        )}
-      </React.Fragment>
-    );
-  }
-}
-
-function QuestionContainer(props) {
-  const { questions } = props;
-  const [currentQuestions, setCurrentQuestions] = useState(questions);
-  const [currentFilter, setCurrentFilter] = useState("all");
-
-  const upVoteCount = question => {
-    return question.votes.filter(v => v.vote_type == "up").length;
-  };
-
-  questions.sort((a, b) => {
-    if (upVoteCount(a) > upVoteCount(b)) {
-      return -1;
-    } else {
-      return 1;
-    }
-  });
-
-  const onChange = event => {
-    setCurrentFilter(event.target.value);
-    if (event.target.value != "all") {
-      setCurrentQuestions(
-        questions.filter(q => q.status == event.target.value)
-      );
-    } else {
-      setCurrentQuestions(questions);
-    }
-  };
-
-  return (
-    <React.Fragment>
-      <Grid container spacing={2}>
-        <Grid item xs={12} style={{ marginLeft: "16px" }}>
-          {currentQuestions.map((q, i) => {
-            return (
-              <Question
-                key={i}
-                event_id={props.id}
-                question={q}
-                guests={props.guests}
-                refreshQuestions={props.refreshQuestions}
-              />
-            );
-          })}
-        </Grid>
-      </Grid>
-    </React.Fragment>
-  );
-}
-
-function Question(props) {
-  const { id, guest_id } = props.question;
-  console.log(props);
-
-  const postVote = vote_type => {
+  const postVote = (question, vote_type) => {
     const formData = new FormData();
-    formData.append("question_id", id);
-    formData.append("guest_id", guest_id);
     formData.append("vote_type", vote_type);
 
-    fetch(`/v1/questions/${id}/vote`, {
+    fetch(`/v1/questions/${question.id}/vote`, {
       method: "POST",
       body: formData
     })
       .then(resp => resp.json())
       .then(resp => {
         if (!resp.error) {
-          props.refreshQuestions();
+          fetchQuestions();
         }
       });
   };
@@ -214,33 +108,109 @@ function Question(props) {
       });
   };
 
-  const getGuest = id => props.guests.find(g => g.id == id);
+  const sortQuestions = (questions) => {
+    questions.sort((a, b) => {
+      if (upVoteCount(a) > upVoteCount(b)) {
+        return -1;
+      } else {
+        return 1;
+      }
+    });
+  };
+
+  const getGuest = id => guests.find(g => g.id == id);
+
   const getGuestName = g => g.firstname + " " + g.lastname;
-  const upVoteCount = () => {
-    return props.question.votes.filter(v => v.vote_type == "up").length;
+
+  const upVoteCount = question => {
+    return question.votes.filter(v => v.vote_type == "up").length;
   };
-  const downVoteCount = () => {
-    return props.question.votes.filter(v => v.vote_type == "down").length;
+
+  const downVoteCount = question => {
+    return question.votes.filter(v => v.vote_type == "down").length;
   };
+
+  const upButtonTitle = question => {
+    return `Up(${upVoteCount(question)})`;
+  };
+
+  const downButtonTitle = question => {
+    return `Down(${downVoteCount(question)})`;
+  };
+
+  const upVote = question => {
+    postVote(question, "up");
+  };
+
+  const downVote = question => {
+    postVote(question, "down");
+  };
+
 
   return (
     <React.Fragment>
+      {isLoadingEvent && <h4>Loading Event...</h4>}
+      {!isLoadingEvent && !isLoadingQuestions && (
+        <Grid container spacing={2}>
+          <Grid item xs={1}></Grid>
+          <Grid item xs={6}>
+            <div>
+              <h2>{event.name} @ Company</h2>
+            </div>
+          </Grid>
+          <Grid item xs={5}></Grid>
+          <Grid item xs={1}></Grid>
+          <Grid item xs={6}>
+            <AskQuestion event={event} refreshQuestions={fetchQuestions} />
+          </Grid>
+          <Grid item xs={5}></Grid>
+          <Grid item xs={1}></Grid>
+          <Grid item xs={6}>
+            <QuestionContainer
+              id={id}
+              questions={questions}
+              guests={guests}
+              setQuestions={setQuestions}
+              refreshQuestions={fetchQuestions}
+              buttons={[
+                {
+                  color: "secondary",
+                  onClick: upVote,
+                  title: upButtonTitle
+                },
+                {
+                  color: "secondary",
+                  onClick: downVote,
+                  title: downButtonTitle
+                }
+              ]}
+              extraButtons={props.extraButtons}
+            />
+          </Grid>
+        </Grid>
+      )}
+    </React.Fragment>
+  );
+}
+
+function QuestionContainer(props) {
+  return (
+    <React.Fragment>
       <Grid container spacing={2}>
-        <Grid item xs={6}>
-          <Box textAlign="left" fontSize="h6.fontSize">
-            {props.question.content} &nbsp;
-            {props.question.status}
-          </Box>
-          <Box textAlign="left" fontStyle="italic" fontSize={14}>
-            by {getGuestName(getGuest(props.question.guest_id))}&nbsp;&nbsp;
-          </Box>
-          <Button color="secondary" onClick={() => postVote("up")}>
-            Up({upVoteCount()})
-          </Button>
-          &nbsp;
-          <Button color="secondary" onClick={() => postVote("down")}>
-            Down({downVoteCount()})
-          </Button>
+        <Grid item xs={12}>
+          {props.questions.map((q, i) => {
+            return (
+              <Question
+                key={i}
+                event_id={props.id}
+                question={q}
+                guests={props.guests}
+                refreshQuestions={props.refreshQuestions}
+                buttons={props.buttons}
+                extraButtons={props.extraButtons}
+              />
+            );
+          })}
         </Grid>
       </Grid>
     </React.Fragment>

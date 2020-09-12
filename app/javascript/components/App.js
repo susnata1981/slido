@@ -7,12 +7,11 @@ import { useHistory } from "react-router-dom";
 import HelloWorld from "./HelloWorld";
 import Event from "./Event";
 import Join from "./Join";
-import Question from "./Question";
 import EventDetails from "./EventDetails";
 import Guest from "./Guest";
 import history from "./History";
 import AdminHome from "./admin/Home";
-import AdminEventDetails from "./admin/AdminEventDetails";
+import AdminEventDetails from "./admin/AEventDetails";
 import CreateEvent from "./admin/CreateEvent";
 
 import { Grid, Button } from "@material-ui/core";

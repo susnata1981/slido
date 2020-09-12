@@ -2,6 +2,8 @@ import React, { useEffect, useState, useContext } from "react";
 
 import { useForm } from "react-hook-form";
 
+import Question from '../core/Question';
+
 import {
   Box,
   Button,
@@ -33,6 +35,7 @@ export default class AdminEventDetails extends React.Component {
       .then(response => response.json())
       .then(result => {
         let questions = this.extractQuestion(result);
+        console.log(questions);
         if (this._isMounted) {
           this.setState({
             isLoadingQuestions: false,
@@ -189,7 +192,7 @@ function QuestionContainer(props) {
   );
 }
 
-function Question(props) {
+{/*function Question(props) {
   const { id, guest_id } = props.question;
   console.log(props);
 
@@ -259,3 +262,4 @@ function Question(props) {
     </React.Fragment>
   );
 }
+*/}

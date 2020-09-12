@@ -58,16 +58,16 @@ module V1
 
     def create
       @question = Question.new(question_params)
-      puts question_params
+      unless @question.content.present?
+        render json: { success: false }, status: 500
+        return
+      end
+
       @question.guest = Guest.find(session[:guest]["id"])
       @question.event = Event.find(session[:event]["id"])
       @question.status = 'pending_review'
-      if @question.save
-        puts QuestionSerializer.new(@question).serializable_hash
-      else
-        puts @question.errors.messages
-        render json: { success: false }, status: 500
-      end
+      @question.save!
+      render json: QuestionSerializer.new(@question).serializable_hash, status: :ok
     end
 
     private
